@@ -7,6 +7,8 @@
 # Unignore all dirs
 !*/
 
+Datasets/
+
 CMakeLists.txt.user
 CMakeLists_modified.txt
 
