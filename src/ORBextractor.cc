@@ -1093,7 +1093,10 @@ namespace ORB_SLAM3
         Mat image = _image.getMat();
         assert(image.type() == CV_8UC1 );
 
-        // Pre-compute the scale pyramid
+        // Apply sharpening to counteract blur
+        ApplySharpen(image);
+
+        // Pre-compute the scale pyramid on filtered image
         ComputePyramid(image);
 
         vector < vector<KeyPoint> > allKeypoints;
@@ -1165,6 +1168,45 @@ namespace ORB_SLAM3
         }
         //cout << "[ORBextractor]: extracted " << _keypoints.size() << " KeyPoints" << endl;
         return monoIndex;
+    }
+
+    void ORBextractor::ApplySharpen(cv::Mat& image)
+    {
+        // Downsample for blur detection (more efficient)
+        cv::Mat small;
+        cv::resize(image, small, cv::Size(), 0.25, 0.25, cv::INTER_AREA);
+
+        // Get 2nd order derivative from Laplacian
+        cv::Mat lap;
+        cv::Laplacian(small, lap, CV_16S)
+
+        // Compute standard deviation as blur score
+        cv::Scalar mu, sigma;
+        cv::meanStdDev(lap, mu, sigma);
+        double variance = sigma.val[0] * sigma.val[0];
+
+        // Scale and clamp to 0-1 based on thresholds
+        const double sharpThreshold = 9.375; // 150 * .25^2 chosen as sharp
+        const double blurThreshold  = 1.250; // 20 * .25^2 chosen as blurry
+
+        double blurStrength = 1.0 - std::min(1.0, std::max(0.0,
+            (variance - blurThreshold) / (sharpThreshold - blurThreshold)));
+
+        // Exit if sharp (from 0.0 to 0.2 is sharp; 0.2 to 1.0 is blurry)
+        if (blurStrength < 0.2)
+            return;
+
+        // Make more blurred version to be subtracted
+        cv::Mat blurred;
+        cv::GaussianBlur(image, blurred, cv::Size(5, 5), 1.5, 1.5,
+                        cv::BORDER_REFLECT_101);
+
+        // Blur correction strength scalar
+        const double alpha_eff = 1.2 * blurStrength * blurStrength;
+
+        // Updates image with unsharp masking (USM)
+        // (subtracts blurred from original to isolate details and then adds original)
+        cv::addWeighted(image, 1.0 + alpha_eff, blurred, -alpha_eff, 0, image, CV_8U);
     }
 
     void ORBextractor::ComputePyramid(cv::Mat image)
