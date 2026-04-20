@@ -1178,10 +1178,11 @@ namespace ORB_SLAM3
 
         // Get 2nd order derivative from Laplacian
         cv::Mat lap;
-        cv::Laplacian(small, lap, CV_16S)
+        cv::Laplacian(small, lap, CV_16S);
 
         // Compute standard deviation as blur score
-        cv::Scalar mu, sigma;
+        cv::Scalar mu;
+        cv::Scalar sigma;
         cv::meanStdDev(lap, mu, sigma);
         double variance = sigma.val[0] * sigma.val[0];
 
