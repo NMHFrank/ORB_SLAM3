@@ -1187,14 +1187,14 @@ namespace ORB_SLAM3
         double variance = sigma.val[0] * sigma.val[0];
 
         // Scale and clamp to 0-1 based on thresholds
-        const double sharpThreshold = 9.375; // 150 * .25^2 chosen as sharp
-        const double blurThreshold  = 1.250; // 20 * .25^2 chosen as blurry
+        const double sharpThreshold = 4000; // chosen as sharp
+        const double blurThreshold  = 1500; // chosen as blurry
 
         double blurStrength = 1.0 - std::min(1.0, std::max(0.0,
             (variance - blurThreshold) / (sharpThreshold - blurThreshold)));
 
-        // Exit if sharp (from 0.0 to 0.2 is sharp; 0.2 to 1.0 is blurry)
-        if (blurStrength < 0.2)
+        // Exit if sharp (from 0.0 to 0.5 is sharp; 0.5 to 1.0 is blurry)
+        if (blurStrength < 0.5)
             return;
 
         // Make more blurred version to be subtracted
