@@ -1,6 +1,14 @@
 # ORB-SLAM3
 Details of changes between the different versions.
 
+### V2.0, 23rd April 2026
+
+- Built project based around Monocular and Monocular-Inertial EuRoC, removing unrelated configurations
+
+- Added Unsharp Masking adaptive filtration to orb feature extraction
+
+- Added Python scripts for applying blur and data analysis
+
 ### V1.0, 22th December 2021
 
 - OpenCV static matrices changed to Eigen matrices. The average code speed-up is 16% in tracking and 19% in mapping, w.r.t. times reported in the ORB-SLAM3 paper.
