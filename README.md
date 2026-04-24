@@ -1,5 +1,17 @@
 # ORB-SLAM3
 
+### V2.0, April 23rd, 2026
+**Authors:** Maaz Siddiq, Nicholas Frank | Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, José M. M. Montiel, and Juan D. Tardos.
+
+This project evaluates the effects of both blurring and sharpening the monocular and monocular-inertial data from the popular EuRoC MAV dataset within an ORB-SLAM3 environment. All changes to the original ORB-SLAM3 codebase can be found within commits but generally fall into three categories linked below for easy access: removal of unnecessary examples to reduce build time, implementation of variable sharpening via USM, and addition of new scripts for data processing.
+
+
+[ORBextractor.cc](src/ORBextractor.cc#L1173) - Variable sharpening via Unsharp Masking implementation
+
+[blur.py](Datasets/blur.py) - Tool to apply specified motion and/or Gaussian blur to dataset
+
+[truth.py](Datasets/truth.py) - Converter for  EuRoC ground truth to TUM txt format (enabling evo)
+
 ### V1.0, December 22th, 2021
 **Authors:** Carlos Campos, Richard Elvira, Juan J. Gómez Rodríguez, [José M. M. Montiel](http://webdiis.unizar.es/~josemari/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/).
 
